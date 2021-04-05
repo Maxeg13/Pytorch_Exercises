@@ -36,11 +36,28 @@ class Net(nn.Module):
 #        _,x = torch.max(x)
         
         return x
+def learning(net, optimizer,epoches_N , data_learn, targs_learn):# 4000
+    for epoch in range(epoches_N):
+        optimizer.zero_grad();
+        ind1=np.random.randint(2);# рандомный класс
+        ind2=np.random.randint(data_learn[ind1].shape[0]) # индекс рандомного сэмпла
+        #этого класса
+        learn_batch=data_learn[ind1][ind2]
+        learn_batch=torch.tensor(learn_batch,dtype=torch.float)
+        output=net(learn_batch);
+        criterion = nn.MSELoss(); #тут может быть метод наименьших квадратов
+    #        net.zero_grad()
+    #    loss = criterion(output, torch.tensor([ind1],dtype=torch.float))
+        loss = criterion(output, targs_learn[ind1])
+        
+        loss.backward()# нашел dw
+        optimizer.step()
+    
     
 net=Net() 
 
-subject='Sutyagina'
-_,data_learn_mid=load_data(subject,'mid_2')
+subject='fingers'
+_,data_learn_mid=load_data(subject,'mid_3')
 x,data_learn_prox=load_data(subject,'prox_1')
 
 t=np.array([a for a in range(x.shape[0])],dtype=np.float)/1000.
@@ -56,7 +73,7 @@ plt.title('signals, '+'Oksana')
 #расширь тестовые данные
 #^^^^^^^^^^^^^^^^^^^^^^^
 _,data_test_mid=load_data(subject,'mid_3')
-_,data_test_prox=load_data(subject,'prox_3')
+_,data_test_prox=load_data(subject,'prox_1')
 
 
 #получи 2 картинки (второй график - классы на выходе)
@@ -89,23 +106,10 @@ norm_val=1./70
 for x,y in data_test,data_learn:
     x*=norm_val
     y*=norm_val
-optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.2)
+optimizer = optim.SGD(net.parameters(), lr=0.2, momentum=0.2)
 
-for epoch in range(20000):
-    optimizer.zero_grad();
-    ind1=np.random.randint(2);# рандомный класс
-    ind2=np.random.randint(data_learn[ind1].shape[0]) # индекс рандомного сэмпла
-    #этого класса
-    learn_batch=data_learn[ind1][ind2]
-    learn_batch=torch.tensor(learn_batch,dtype=torch.float)
-    output=net(learn_batch);
-    criterion = nn.MSELoss(); #тут может быть метод наименьших квадратов
-#        net.zero_grad()
-#    loss = criterion(output, torch.tensor([ind1],dtype=torch.float))
-    loss = criterion(output, targs_learn[ind1])
-    
-    loss.backward()# нашел dw
-    optimizer.step()
+learning(net, optimizer,epoches_N=4000 , data_learn=data_learn, targs_learn=targs_learn)
+
     
     
 print("test time!")
