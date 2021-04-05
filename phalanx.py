@@ -36,14 +36,15 @@ class Net(nn.Module):
 #        _,x = torch.max(x)
         
         return x
+    
+    
 def learning(net, optimizer,epoches_N , data_learn, targs_learn):# 4000
     for epoch in range(epoches_N):
         optimizer.zero_grad();
-        ind1=np.random.randint(2);# рандомный класс
+        ind1=np.random.randint(len(data_learn));# рандомный класс
         ind2=np.random.randint(data_learn[ind1].shape[0]) # индекс рандомного сэмпла
         #этого класса
         learn_batch=data_learn[ind1][ind2]
-        learn_batch=torch.tensor(learn_batch,dtype=torch.float)
         output=net(learn_batch);
         criterion = nn.MSELoss(); #тут может быть метод наименьших квадратов
     #        net.zero_grad()
@@ -98,7 +99,11 @@ fig1.legend(['1st chan','2nd chan','3rd chan','4th chan'])
 
 
 
-data_learn=[data_learn_mid,data_learn_prox]
+data_learn=[torch.tensor(data_learn_mid,dtype=torch.float),
+            torch.tensor(data_learn_prox ,dtype=torch.float)]
+# for a in data_learn:
+#     a=torch.tensor(a,dtype=torch.float)
+
 data_test=[data_test_mid,data_test_prox]
 targs_learn=torch.tensor([[1,0],[0,1]],dtype=torch.float)
 
@@ -108,7 +113,8 @@ for x,y in data_test,data_learn:
     y*=norm_val
 optimizer = optim.SGD(net.parameters(), lr=0.2, momentum=0.2)
 
-learning(net, optimizer,epoches_N=4000 , data_learn=data_learn, targs_learn=targs_learn)
+learning(net, optimizer,epoches_N=4000 , 
+         data_learn=data_learn, targs_learn=targs_learn)
 
     
     
