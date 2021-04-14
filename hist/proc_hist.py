@@ -34,7 +34,7 @@ for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
         hist.step(emg[t,:]) 
         # print(t)
-    shots.append(hist.vals)
+    shots.append(hist.vals.copy())
  
  
 
