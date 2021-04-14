@@ -7,6 +7,7 @@ import torch.optim as optim
 #import torchvision.transforms as transforms
 #import torch.nn.functional as F
 #import rms_script
+from learning import learning
 
 import pylab
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ import matplotlib.pyplot as plt
 #device = torch.device('cuda')
 channels_N=4
 #x_data = torch.tensor([[x/10.-4/10.] for x in range(9)],dtype=torch.float)
-#y_data = np.array([7., 4, 2 , 1 ,0, 1, 2 , 4 , 7],dtype=float)/40.
+#y_data = np.array([7., 4, 2 , 1 ,0, 1, 2 , 4 , 7],dtype=torch.float)/40.
 #y_data=torch.tensor([[x-3.5/40.] for x in y_data] ,dtype=torch.float)
 
 class Net(nn.Module):
@@ -37,22 +38,7 @@ class Net(nn.Module):
         
         return x
     
-    
-def learning(net, optimizer,epoches_N , data_learn, targs_learn):# 4000
-    for epoch in range(epoches_N):
-        optimizer.zero_grad();
-        ind1=np.random.randint(len(data_learn));# рандомный класс
-        ind2=np.random.randint(data_learn[ind1].shape[0]) # индекс рандомного сэмпла
-        #этого класса
-        learn_batch=data_learn[ind1][ind2]
-        output=net(learn_batch);
-        criterion = nn.MSELoss(); #тут может быть метод наименьших квадратов
-    #        net.zero_grad()
-    #    loss = criterion(output, torch.tensor([ind1],dtype=torch.float))
-        loss = criterion(output, targs_learn[ind1])
-        
-        loss.backward()# нашел dw
-        optimizer.step()
+  
     
     
 net=Net() 
@@ -105,15 +91,14 @@ data_learn=[torch.tensor(data_learn_mid,dtype=torch.float),
 #     a=torch.tensor(a,dtype=torch.float)
 
 data_test=[data_test_mid,data_test_prox]
-targs_learn=torch.tensor([[1,0],[0,1]],dtype=torch.float)
+targs_learn=torch.tensor([[[1,0]],[[0,1]]],dtype=torch.float)
 
 norm_val=1./70
 for x,y in data_test,data_learn:
     x*=norm_val
     y*=norm_val
-optimizer = optim.SGD(net.parameters(), lr=0.2, momentum=0.2)
 
-learning(net, optimizer,epoches_N=4000 , 
+learning(net=net, lr=0.4,epoches_N=1000 , 
          data_learn=data_learn, targs_learn=targs_learn)
 
     
