@@ -15,7 +15,7 @@ class Hist:
                 for k in range(self.N):
                     if(self.grid[i]>x[0] and self.grid[j]>x[1] and self.grid[k]>x[2]):
                         if(not(done)):                            
-                            self.vals[i,j,k]+=.07
+                            self.vals[i,j,k]+=.12
                             done = True
                         self.vals[i,j,k]*=0.97   
                     

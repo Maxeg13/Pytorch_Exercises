@@ -15,7 +15,7 @@ shots_N = 10
 channels_N = 4
 plot_shift = 2000
 chans = [2,3,4,5]
-test_file = '123'
+test_file = '3'
 
 
 # Извлечение ЭМГ
@@ -32,7 +32,7 @@ plt.plot(emg+np.array([[-x*10 for x in range(4)]]))
 
 # Наделаем снимки из тестового файла
 
-hist = Hist(N = hist_N, lim = 4)
+hist = Hist(N = hist_N, lim = 3)
 shots=[]
 for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
@@ -68,11 +68,11 @@ for file_name in ['0', '1', '2', '3', '123']:
     # Наделаем снимки из тестового файла
     one_class_data = []
     
-    hist = Hist(N = hist_N, lim = 4)
+    hist = Hist(N = hist_N, lim = 2)
     for iter in range(shots_N):
         for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
             hist.step(emg[t,:]) 
-        one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)).copy())
+        one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)))
         
     data_learn.append(one_class_data)
 data_learn = torch.tensor(data_learn, dtype = torch.float)
@@ -81,16 +81,18 @@ data_learn = torch.tensor(data_learn, dtype = torch.float)
 # обучим Сетку
 
 net = Net(hist.N*hist.N*hist.N)
-learning(net=net, lr=.8,epoches_N=600 , 
+learning(net=net, lr=.7,epoches_N=800 , 
          data_learn=data_learn, targs_learn=targs_learn)
-print(net(data_learn[4]))
+print(net(data_learn[0]))
+print(net(data_learn[1]))
+print(net(data_learn[2]))
+print(net(data_learn[3]))
+print(net(data_learn[4]))    
     
-    
-print("test time!")
+# print("test time!")
 #print(net(torch.tensor(data_test[0],dtype=torch.float)))
-print('\n\n\n')
+# print('\n\n\n')
 #print(net(torch.tensor(data_test[1],dtype=torch.float)))
 
-o1= net(torch.tensor(data_learn[0],dtype=torch.float))   
-o2=net(torch.tensor(data_learn[1],dtype=torch.float))
+
 

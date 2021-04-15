@@ -92,6 +92,7 @@ data_learn=[torch.tensor(data_learn_mid,dtype=torch.float),
 
 data_test=[data_test_mid,data_test_prox]
 targs_learn=torch.tensor([[[1,0]],[[0,1]]],dtype=torch.float)
+# targs_learn=[[torch.tensor([1,0])],[torch.tensor([0,1])]]
 
 norm_val=1./70
 for x,y in data_test,data_learn:
