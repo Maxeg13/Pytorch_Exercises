@@ -40,7 +40,7 @@ for iter in range(shots_N):
 # Подготовим данные для обучения    
  
 targs_learn=torch.tensor([[[0,0,0]],[[1,0,0]], 
-                          [[0,1,0]],[[0,0,1]], [[1,1,1]]],dtype=torch.float32)
+                          [[0,1,0]],[[0,0,1]],[[1,1,1]]],dtype=torch.float32)
 
 
 
