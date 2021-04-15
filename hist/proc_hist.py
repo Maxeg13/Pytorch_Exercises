@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 from loadFile import load_data
 import numpy as np
+import torch
 from Histogram import Hist
 # np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
@@ -8,17 +9,16 @@ plt.close()
                         
 hist_N = 8  
 layer_ind = 6
-shots_N = 6
-channels_N=4
+shots_N = 10
+channels_N = 4
 plot_shift = 2000
 chans = [2,3,4,5]
-test_file = '23'
-
+test_file = '123'
 
 
 # Извлечение ЭМГ
 
-emg = load_data(channels_N,chans, test_file)
+emg = load_data(channels_N,chans, '1504/'+test_file)
 emg/=50
 emg_size = emg.shape[0]
 emg_chunk_size = int(emg_size/shots_N)
@@ -26,17 +26,22 @@ emg_chunk_size = int(emg_size/shots_N)
 plt.figure(0)
 plt.plot(emg+np.array([[-x*10 for x in range(4)]]))
 
-# Наделаем снимки
+
+# Наделаем снимки из тестового файла
 
 hist = Hist(N = hist_N, lim = 4)
 shots=[]
 for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
         hist.step(emg[t,:]) 
-        # print(t)
     shots.append(hist.vals.copy())
+    
  
+# Подготовим данные для обучения    
  
+targs_learn=torch.tensor([[[0,0,0]],[[1,0,0]], 
+                          [[0,1,0]],[[0,0,1]], [[1,1,1]]],dtype=torch.float32)
+
 
 
 fig, axs = plt.subplots(nrows=hist_N, ncols=shots_N, figsize=(hist_N, hist_N), sharey=True)
