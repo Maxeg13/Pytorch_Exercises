@@ -1,14 +1,26 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Apr 15 20:02:20 2021
-
-@author: DrPepper
-"""
 import numpy as np
-
-a=np.array([1,3,2.,1.])
-
-for i in range(1000):
+from matplotlib import pyplot as plt
+from matplotlib.animation import FuncAnimation
+from collections import deque
+plt.style.use('seaborn-pastel')
+x = np.linspace(0, 4, 100) 
+y=deque(x)
+fig = plt.figure()
+ax = plt.axes(xlim=(0, 4), ylim=(-2, 2))
+line, = ax.plot([], [], lw=3)
+ 
+def init():
+    line.set_data([], [])
+    return line,
+def animate(i):
+    
+    y.append( np.sin(2 * np.pi * (0.01 * i)))
+    y.popleft()
+    line.set_data(x, y)
     print(i)
-    hist.step(a)
-    print(net(  torch.tensor(hist.vals.reshape((hist.N*hist.N*hist.N)), dtype = torch.float) ))
+    return line,
+    
+ 
+anim = FuncAnimation(fig, animate, init_func=init,
+                               frames=200, interval=5, blit=True)
+ 

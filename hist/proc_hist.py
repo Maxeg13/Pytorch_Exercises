@@ -5,12 +5,11 @@ from learning import learning
 import torch
 from Net import Net
 from Histogram import Hist
-# np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
+np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
 plt.close() 
                         
 hist_N = 8  
-layer_ind = 6
 shots_N = 10
 channels_N = 4
 plot_shift = 2000
@@ -32,7 +31,7 @@ plt.plot(emg+np.array([[-x*10 for x in range(4)]]))
 
 # Наделаем снимки из тестового файла
 
-hist = Hist(N = hist_N, lim = 3)
+hist = Hist(N = hist_N, lim = 85)
 shots=[]
 for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
@@ -50,8 +49,9 @@ plt.show()
 
 
  
-# Подготовим данные для обучения    
+# Подготовим данные для обучения   
  
+hist = Hist(N = hist_N, lim = 85) 
 targs_learn = torch.tensor([[[0,0,0]],[[1,0,0]], 
                           [[0,1,0]],[[0,0,1]],[[1,1,1]]],dtype=torch.float32)
 
@@ -61,18 +61,17 @@ for file_name in ['0', '1', '2', '3', '123']:
     # Извлечение ЭМГ
     
     emg = loadFile.load_data(channels_N,chans, '1504/'+file_name)
-    emg/=50
+    # emg/=50
     emg_size = emg.shape[0]
     emg_chunk_size = int(emg_size/shots_N)
     
     # Наделаем снимки из тестового файла
     one_class_data = []
     
-    hist = Hist(N = hist_N, lim = 2)
     for iter in range(shots_N):
         for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
             hist.step(emg[t,:]) 
-        one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)))
+        one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)).copy())
         
     data_learn.append(one_class_data)
 data_learn = torch.tensor(data_learn, dtype = torch.float)
