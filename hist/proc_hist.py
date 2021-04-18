@@ -9,23 +9,26 @@ np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
 plt.close() 
                         
-hist_N = 8  
+hist_N = 6  
 shots_N = 10
 channels_N = 4
 plot_shift = 2000
-chans = [2,3,4,5]
-test_file = '3'
+chans = [6,4,5,3]# 5?
+for i in range(channels_N):
+    chans[i]-=1
 
+test_file = '123'
+fold= '1504/'
 
 # Извлечение ЭМГ
 
-emg = loadFile.load_data(channels_N,chans, '1504/'+test_file)
+emg = loadFile.load_data(channels_N,chans, fold+test_file)
 # emg/=50
 emg_size = emg.shape[0]
 emg_chunk_size = int(emg_size/shots_N)
 
 plt.figure(0)
-plt.plot(emg+np.array([[-x*10 for x in range(4)]]))
+plt.plot(emg+np.array([[-x*plot_shift for x in range(4)]]))
 
 
 
@@ -36,6 +39,8 @@ shots=[]
 for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
         hist.step(emg[t,:]) 
+        if(t%5==0):
+            hist.decr()
     shots.append(hist.vals.copy())
     
 fig, axs = plt.subplots(nrows=hist_N, ncols=shots_N, figsize=(hist_N, hist_N), sharey=True)
@@ -71,6 +76,8 @@ for file_name in ['0', '1', '2', '3', '123']:
     for iter in range(shots_N):
         for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
             hist.step(emg[t,:]) 
+            if(t%5==0):
+                hist.decr()
         one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)).copy())
         
     data_learn.append(one_class_data)

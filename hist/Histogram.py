@@ -17,6 +17,11 @@ class Hist:
                         if(not(done)):                            
                             self.vals[i,j,k]+=.12
                             done = True
-                        self.vals[i,j,k]*=0.97   
+                        # self.vals[i,j,k]*=0.97  
+    def decr(self):
+        for i in range(self.N):
+            for j in range(self.N):
+                for k in range(self.N):
+                    self.vals[i,j,k]*=0.96 
                     
  
