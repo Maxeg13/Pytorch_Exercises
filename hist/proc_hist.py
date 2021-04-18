@@ -20,7 +20,7 @@ test_file = '3'
 # Извлечение ЭМГ
 
 emg = loadFile.load_data(channels_N,chans, '1504/'+test_file)
-emg/=50
+# emg/=50
 emg_size = emg.shape[0]
 emg_chunk_size = int(emg_size/shots_N)
 

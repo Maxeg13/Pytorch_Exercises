@@ -19,13 +19,13 @@ sock.bind((UDP_IP, UDP_PORT))
 
 x_size=1000
 x = np.linspace(0, x_size, x_size) 
-y=deque(x)
+y=deque([0 for x in range(x_size)])
 fig = plt.figure()
 ax = plt.axes(xlim=(0, x_size),ylim = (-800,2000))
 # plt.autoscale(ax)
 line, = ax.plot([], [], lw=2)
  
-l=[0,0,np.linspace(0, x_size, x_size) , deque(x) ]
+l=[np.linspace(0, x_size, x_size) , [y,y.copy(),y.copy(),y.copy()] ]
 
 def init():
     line.set_data([], [])
@@ -34,39 +34,33 @@ def animate(i, l):
     
     
     # print("received message: %s" % data)
-    shift=4*2
+    shift=4*0
     for iter in range(100):
         data, addr = sock.recvfrom(100) # buffer size is 1024 bytes
         # print(data)
-        for a in data:     
-            print(type(data))
-            if(l[0]==0 and a!=255):
-                print('trouble')
-            else:
-                if(l[0]==(1+shift)):
-                    b=np.int32(0)
-                    b+=np.uint8(a) 
-                    # 
-                if(l[0] ==(2+shift)):
-                    # 1
-                    b+=256*np.uint8(a)
-                    
-                if(l[0]==(3+shift)):
-                    # 1
-                    b+=65536*np.uint8(a)
-                if(l[0]==(4+shift)):
-                    b+=np.uint8(a)*16777216
-                    # b/=16777216.
-                    l[3].append(int(b) )
-                    l[3].popleft()
-                                                      
-                
-                l[0]+=1
-                l[0]%=17          
+        for i,a in enumerate(data):    
            
+            byte_ind=i%4
+            chan_ind=int((i%16)/4)
+            if(byte_ind==0):
+                b=np.int32(0)
+                b+=np.uint8(a) 
+                # 
+            if(byte_ind ==1):
+                # 1
+                b+=256*np.uint8(a)
+                
+            if(byte_ind==2):
+                # 1
+                b+=65536*np.uint8(a)
+            if(byte_ind==3):
+                b+=np.uint8(a)*16777216
+                # b/=16777216.
+                l[1][chan_ind].append(int(b) )
+                l[1][chan_ind].popleft()      
                 
       
-    line.set_data(l[2],l[3])                
+    line.set_data(l[0],l[1][0])                
     return line,
             
     
