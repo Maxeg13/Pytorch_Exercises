@@ -23,7 +23,6 @@ def load_data(channels_N,chans, file_name):
             emg[i-1,j]=float(a[chans[j]+1])
     emg=emg-np.mean(emg,0)       
 
-    
     return(emg)
  
 
