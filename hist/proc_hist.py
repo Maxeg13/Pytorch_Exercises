@@ -10,14 +10,15 @@ np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 plt.close() 
                         
 hist_N = 6  
-shots_N = 10
+shots_N = 20
 channels_N = 4
 plot_shift = 2000
-chans = [6,4,5,3]# 5?
+# chans = [6,4,5,3]
+chans = [6,4,3,5]
 for i in range(channels_N):
     chans[i]-=1
 
-test_file = '123'
+test_file = '1'
 fold= '1804/'
 
 # Извлечение ЭМГ
@@ -34,13 +35,12 @@ plt.plot(emg+np.array([[-x*plot_shift for x in range(4)]]))
 
 # Наделаем снимки из тестового файла
 
-hist = Hist(N = hist_N, lim = 85)
+hist = Hist(N = hist_N, lim = 50)
 shots=[]
 for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
         hist.step(emg[t,:]) 
-        if(t%5==0):
-            hist.decr()
+        # hist.decr()
     shots.append(hist.vals.copy())
     
 fig, axs = plt.subplots(nrows=hist_N, ncols=shots_N, figsize=(hist_N, hist_N), sharey=True)
@@ -57,15 +57,17 @@ plt.show()
 # Подготовим данные для обучения   
  
 hist = Hist(N = hist_N, lim = 85) 
-targs_learn = torch.tensor([[[0,0,0]],[[1,0,0]], 
+targs_learn = torch.tensor([[[0,0,0]],[[0,0,0]],[[1,0,0]], 
                           [[0,1,0]],[[0,0,1]],[[1,1,1]]],dtype=torch.float32,requires_grad=False)
+
+# ,requires_grad=False
 
 
 data_learn=[]
-for file_name in ['0', '1', '2', '3', '123']:
+for file_name in ['0', '0', '1', '2', '3', '123']:
     # Извлечение ЭМГ
     
-    emg = loadFile.load_data(channels_N,chans, '1504/'+file_name)
+    emg = loadFile.load_data(channels_N,chans, fold+file_name)
     # emg/=50
     emg_size = emg.shape[0]
     emg_chunk_size = int(emg_size/shots_N)
@@ -76,18 +78,17 @@ for file_name in ['0', '1', '2', '3', '123']:
     for iter in range(shots_N):
         for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
             hist.step(emg[t,:]) 
-            if(t%5==0):
-                hist.decr()
+
         one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)).copy())
         
     data_learn.append(one_class_data)
 data_learn = torch.tensor(data_learn, dtype = torch.float,requires_grad=False)
-
+# ,requires_grad=False
 
 # обучим Сетку
 
 net = Net(hist.N*hist.N*hist.N)
-learning(net=net, lr=.7,epoches_N=800 , 
+learning(net=net, lr=.6,epoches_N=1200 , 
          data_learn=data_learn, targs_learn=targs_learn)
 print(net(data_learn[0]))
 print(net(data_learn[1]))

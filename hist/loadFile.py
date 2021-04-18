@@ -21,7 +21,7 @@ def load_data(channels_N,chans, file_name):
         a=data[i].split(';');
         for j in range(0,channels_N):
             emg[i-1,j]=float(a[chans[j]+1])
-    emg=emg-np.mean(emg,0)       
+    # emg=emg-np.mean(emg,0)       
 
     return(emg)
  
