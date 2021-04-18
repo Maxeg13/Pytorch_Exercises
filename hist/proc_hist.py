@@ -18,7 +18,7 @@ for i in range(channels_N):
     chans[i]-=1
 
 test_file = '123'
-fold= '1504/'
+fold= '1804/'
 
 # Извлечение ЭМГ
 
@@ -58,7 +58,7 @@ plt.show()
  
 hist = Hist(N = hist_N, lim = 85) 
 targs_learn = torch.tensor([[[0,0,0]],[[1,0,0]], 
-                          [[0,1,0]],[[0,0,1]],[[1,1,1]]],dtype=torch.float32)
+                          [[0,1,0]],[[0,0,1]],[[1,1,1]]],dtype=torch.float32,requires_grad=False)
 
 
 data_learn=[]
@@ -81,7 +81,7 @@ for file_name in ['0', '1', '2', '3', '123']:
         one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)).copy())
         
     data_learn.append(one_class_data)
-data_learn = torch.tensor(data_learn, dtype = torch.float)
+data_learn = torch.tensor(data_learn, dtype = torch.float,requires_grad=False)
 
 
 # обучим Сетку

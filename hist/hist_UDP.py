@@ -5,14 +5,16 @@ from collections import deque
 import socket
 import numpy as np
 from Histogram import Hist
+from Net import Net
 
 plt.style.use('seaborn-pastel')
 
 class Vars:
-    def __init__(self,xs,deqs,hist):
+    def __init__(self,xs,deqs,hist,net):
         self.xs=xs
         self.deqs=deqs
         self.hist=hist
+        self.net=net
 
 hist_N=6
 frame_i=0
@@ -29,7 +31,8 @@ x_size=1000
 x = np.linspace(0, x_size, x_size) 
 y=deque([0 for x in range(x_size)])
 fig = plt.figure()
-ax = plt.axes(xlim=(0, x_size),ylim = (-2000,800))
+# ax = plt.axes(xlim=(0, x_size),ylim = (-2000,800))
+ax = plt.axes(xlim=(0, x_size),ylim = (-1,2))
 # plt.autoscale(ax)
 line, = ax.plot([], [], lw=2)
  
