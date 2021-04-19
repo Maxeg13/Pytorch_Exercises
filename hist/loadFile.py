@@ -10,18 +10,19 @@ import numpy as np
 #plt.close
 #Data for plotting
 def load_data(channels_N,chans, file_name):
+    delete_N=1000
     data = open(
         "C:/Users/DrPepper/Desktop/ech_monitor/data/"+file_name+".txt", "r").readlines()
-    N=len(data)
+    N=len(data)-delete_N
     emg=np.zeros((N,channels_N),dtype=float)   
 
    
     
     for i in range(1,N):
-        a=data[i].split(';');
+        a=data[i+delete_N].split(';');
         for j in range(0,channels_N):
             emg[i-1,j]=float(a[chans[j]+1])
-    # emg=emg-np.mean(emg,0)       
+    emg=emg-np.mean(emg,0)       
 
     return(emg)
  

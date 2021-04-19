@@ -17,6 +17,7 @@ class Vars:
         self.deqs=deqs
         self.hist=hist
         self.net=net
+        self.shifts=np.array([-16.00, -2.00,  3.00, -13.00])
 
 hist_N=6
 frame_i=0
@@ -33,18 +34,20 @@ x_size=1000
 x = np.linspace(0, x_size, x_size) 
 y=deque([0 for x in range(x_size)])
 fig = plt.figure()
-# ax = plt.axes(xlim=(0, x_size),ylim = (-2000,800))
-ax = plt.axes(xlim=(0, x_size),ylim = (-1,2))
+# ax = plt.axes(xlim=(0, x_size),ylim = (-200,200))
+# ax = plt.axes(xlim=(0, x_size),ylim = (-1,2))
+
+# !fings
+ax = plt.axes(xlim=(0, 5),ylim = (0,2))
 # plt.autoscale(ax)
-line, = ax.plot([], [], lw=2)
+line, = ax.plot([], [], lw=1)
  
-hist = Hist(N = hist_N, lim = 85)
+# hist = Hist(N = hist_N, lim = 85)
 vs = Vars(xs = np.linspace(0, x_size, x_size), 
               deqs =[y,y.copy(),y.copy(),y.copy()], hist = hist,net=net )
 # l=[np.linspace(0, x_size, x_size) , [y,y.copy(),y.copy(),y.copy()] ]
 
 def init():
-    bl=23
     line.set_data([], [])
     return line,
 def animate(i, vs):
@@ -70,27 +73,33 @@ def animate(i, vs):
                         b+=65536*np.uint8(a)
                     else:
                         if(byte_ind==3):
-                            b+=np.uint8(a)*16777216
+                            b+=np.uint8(a)*16777216-vs.shifts[chan_ind]
                             vs.vals[chan_ind]=b
                             
-                            # vs.deqs[chan_ind].append(int(b) )
-                            # vs.deqs[chan_ind].popleft()  
+                            vs.deqs[chan_ind].append(int(b) )
+                            vs.deqs[chan_ind].popleft()  
+                   
                             
+                   # to do smth
             if(j%16==15):
-                hist.step([vs.vals[0], vs.vals[1] , vs.vals[3]])
-                if(iter%8==0):
-                    hist.decr()
+                
+                if(iter%2==0):
+                    vs.hist.step(vs.vals)
                     # vs.deqs[chan_ind].append(int(b) )
                     # vs.deqs[chan_ind].popleft()  
                     
-        if(iter%20==0):
-            tens=torch.tensor(hist.vals.reshape((hist.N*hist.N*hist.N)).copy(), dtype = torch.float,requires_grad=False)
-            print(net(tens).detach().numpy())
-            # net(tens).detach().numpy()
-            vs.deqs[0].append(net(tens).detach().numpy()[0] )
-            vs.deqs[0].popleft()  
+                if(iter%20==0):
+                    tens=torch.tensor(vs.hist.vals.reshape((vs.hist.N*vs.hist.N*vs.hist.N)).copy(), dtype = torch.float,requires_grad=False)
+                    res = vs.net(tens).detach().numpy()
+                    print(res)
+                    # net(tens).detach().numpy()
+                    # vs.deqs[0].append( vs.net(tens).detach().numpy()[1] )
+                    # vs.deqs[0].popleft()  
           
-    line.set_data(vs.xs,vs.deqs[0])                
+    line.set_data([1,2,2,3,3,4],[res[0],res[0],
+                                  res[1],res[1],
+                                  res[2],res[2]])  
+    # line.set_data(vs.xs,vs.deqs[2])              
     return line,
             
     

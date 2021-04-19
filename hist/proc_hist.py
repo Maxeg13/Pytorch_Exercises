@@ -9,17 +9,17 @@ np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
 
 plt.close() 
                         
-hist_N = 6  
-shots_N = 20
+hist_N = 6 
+shots_N = 15
 channels_N = 4
-plot_shift = 2000
-# chans = [6,4,5,3]
-chans = [6,4,3,5]
+plot_shift = 200
+chans = [6,4,5,3]
+# chans = [6,4,3,5]
 for i in range(channels_N):
     chans[i]-=1
 
 test_file = '1'
-fold= '1804/'
+fold= '1904/'
 
 # Извлечение ЭМГ
 
@@ -35,7 +35,7 @@ plt.plot(emg+np.array([[-x*plot_shift for x in range(4)]]))
 
 # Наделаем снимки из тестового файла
 
-hist = Hist(N = hist_N, lim = 50)
+hist = Hist(N = hist_N, lim = 70)
 shots=[]
 for iter in range(shots_N):
     for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
@@ -56,15 +56,15 @@ plt.show()
  
 # Подготовим данные для обучения   
  
-hist = Hist(N = hist_N, lim = 85) 
-targs_learn = torch.tensor([[[0,0,0]],[[0,0,0]],[[1,0,0]], 
+# hist = Hist(N = hist_N, lim = 85) 
+targs_learn = torch.tensor([[[0,0,0]],[[1,0,0]], 
                           [[0,1,0]],[[0,0,1]],[[1,1,1]]],dtype=torch.float32,requires_grad=False)
 
 # ,requires_grad=False
 
 
 data_learn=[]
-for file_name in ['0', '0', '1', '2', '3', '123']:
+for file_name in ['0', '1', '2', '3', '123']:
     # Извлечение ЭМГ
     
     emg = loadFile.load_data(channels_N,chans, fold+file_name)

@@ -10,20 +10,17 @@ class Hist:
     def step(self,x):
         done = False
         self.cnt+=1
-        self.cnt%=10
+        self.cnt%=11
         for i in range(self.N):
             for j in range(self.N):
-                for k in range(self.N):
+                for k in range(self.N):                     
                     if(self.grid[i]>x[0] and self.grid[j]>x[1] and self.grid[k]>x[2]):
-                        if(not(done)):                            
-                            self.vals[i,j,k]+=.12
-                            done = True
-                        if(self.cnt==0):    
-                            self.vals[i,j,k]*=0.73
-    def decr(self):
-        for i in range(self.N):
-            for j in range(self.N):
-                for k in range(self.N):
-                    self.vals[i,j,k]*=0.96 
+                        if(not((i>1 and j>1 and k >1)and(i<4 and j<4 and k <4))):
+                            if(not(done)):                            
+                                self.vals[i,j,k]+=.07
+                                done = True
+                            if(self.cnt==0):    
+                                self.vals[i,j,k]*=0.78
+
                     
  
