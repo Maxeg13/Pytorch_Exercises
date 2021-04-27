@@ -21,6 +21,10 @@ for i in range(channels_N):
 test_file = '1'
 fold= '1904/'
 
+def myRand():
+    s=4
+    return(int(np.random.rand()*s-s/2))
+
 # Извлечение ЭМГ
 
 emg = loadFile.load_data(channels_N,chans, fold+test_file)
@@ -77,7 +81,7 @@ for file_name in ['0', '1', '2', '3', '123']:
     
     for iter in range(shots_N):
         for t in range(iter*emg_chunk_size, (iter+1)*emg_chunk_size):
-            hist.step(emg[t,:]) 
+            hist.step(emg[t,:]+[myRand() for x in range(channels_N)]) 
 
         one_class_data.append(hist.vals.reshape((hist.N*hist.N*hist.N)).copy())
         
@@ -88,7 +92,7 @@ data_learn = torch.tensor(data_learn, dtype = torch.float,requires_grad=False)
 # обучим Сетку
 
 net = Net(hist.N*hist.N*hist.N)
-learning(net=net, lr=.6,epoches_N=1200 , 
+learning(net=net, lr=.6,epoches_N=1400 , 
          data_learn=data_learn, targs_learn=targs_learn)
 print(net(data_learn[0]))
 print(net(data_learn[1]))

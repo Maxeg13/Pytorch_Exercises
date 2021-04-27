@@ -17,7 +17,7 @@ class Vars:
         self.deqs=deqs
         self.hist=hist
         self.net=net
-        self.shifts=np.array([-16.00, -2.00,  3.00, -13.00])
+        self.shifts=np.array([-17.20, -2.00,  1.70, -13.00])
 
 hist_N=6
 frame_i=0
